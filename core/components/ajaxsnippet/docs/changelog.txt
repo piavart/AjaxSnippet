@@ -1,4 +1,7 @@
 Changelog for AjaxSnippet.
+1.1.2-pl
+==============
+- Added ability to run snippet by clicking on CSS selector.
 
 1.1.1-pl
 ==============
