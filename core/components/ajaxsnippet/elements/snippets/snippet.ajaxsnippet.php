@@ -34,24 +34,46 @@ switch (strtolower($as_mode)) {
 		break;
 
 	case 'onclick':
-		if (empty($wrapper)) {$wrapper = '<div id="[[+key]]" class="ajax-snippet">
-			<a href="#" class="as_trigger">[[+trigger]]</a>
-			<img src="'.$spinner.'" class="as_spinner" style="width:32px;margin:auto;display:none;">
-		</div>';}
-		if (empty($as_trigger)) {
-			$as_trigger = $modx->lexicon('as_trigger');
-		}
-
-		$modx->regClientScript(preg_replace('/(\t|\n)/', '','
-		<script type="text/javascript">
-			$(document).on("click", ".as_trigger", function(e) {
-				var spinner = $(this).parent().find(".as_spinner");
-				spinner.css("display","block");
-				$(this).remove();
-				'.$script.'
-				return false;
-			});
-		</script>'), true);
+		if(empty($as_selector)){
+		    if (empty($wrapper)) {$wrapper = '<div id="[[+key]]" class="ajax-snippet">
+		    	<a href="#" class="as_trigger">[[+trigger]]</a>
+		    	<img src="'.$spinner.'" class="as_spinner" style="width:32px;margin:auto;display:none;">
+		    </div>';}
+		    if (empty($as_trigger)) {
+		    	$as_trigger = $modx->lexicon('as_trigger');
+		    }
+            
+		    $modx->regClientScript(preg_replace('/(\t|\n)/', '','
+		    <script type="text/javascript">
+		    	$(document).on("click", ".as_trigger", function(e) {
+		    		var spinner = $(this).parent().find(".as_spinner");
+		    		spinner.css("display","block");
+		    		$(this).remove();
+		    		'.$script.'
+		    		return false;
+		    	});
+		    </script>'), true);
+        	}
+        	else{
+            		if(empty($as_refresh)){$as_refresh = false;}
+            		$ajax='';
+            		if($as_refresh == false){$ajax = '$(this).attr("ajax","none");';}
+            		if (empty($wrapper)) {$wrapper = '<div id="[[+key]]" class="ajax-snippet">
+		    		<img src="'.$spinner.'" class="as_spinner" style="width:32px;margin:auto;display:none;">
+		    	</div>';}
+		    	$modx->regClientScript(preg_replace('/(\t|\n)/', '','
+		    	<script type="text/javascript">
+		    		$(document).on("click", "'.$as_selector.'", function(e) {
+		    	    		if(!$(this).attr("ajax")){
+		    		    		var spinner = $("'.$as_target.'").find(".as_spinner");
+		    		    		'.$ajax.'
+		    		    		spinner.css("display","block");
+		    		    		'.$script.'
+		    		    		return false;
+		    	    		}
+		    		});
+		    		</script>'), true);
+        	}
 		$output = str_replace(array('[[+key]]','[[+trigger]]'), array($key, $as_trigger), $wrapper);
 		break;
 
